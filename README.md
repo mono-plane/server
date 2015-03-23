@@ -8,13 +8,19 @@ This an example runtime assembly, that demonstrates how the different components
 mvn antrun:run -Pdev install
 ```
 
-### Run the server
+## Run the server
 
 ```
 cd target/wildfly-8.2.0.Final
 ./binstandalone.sh -c standalone-mono.xml  -Dcassandra.boot_without_jna=true
 
 ```
+
+### Patches, overlays, etc
+
+Take a look at the assembly file to see what overlays get installed.
+
+
 
 
 
