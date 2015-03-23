@@ -147,16 +147,16 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.8</version>
             <executions>
               <execution>
                 <id>unzip-distro</id>
                 <phase>install</phase>
                 <configuration>
                   <target>
-                    <unzip src="${project.build.directory}/${project.build.finalName}-distribution.zip" dest="${project.build.directory}" />
+                    <unzip overwrite="true" failOnEmptyArchive="true" src="${project.build.directory}/${project.build.finalName}-distribution.zip" dest="${project.build.directory}" />
                     <chmod dir="${project.build.directory}/${dist.zip.root.dir}/bin" includes="*.sh"
                            perm="u+x" type="file" />
-                    <echo>Extracted ${project.build.directory}/${project.build.finalName}-distribution.zip into ${project.build.directory}</echo>
                   </target>
                 </configuration>
                 <goals>
