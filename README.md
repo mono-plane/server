@@ -12,7 +12,7 @@ mvn antrun:run -Pdev install
 
 ```
 cd target/wildfly-8.2.0.Final
-./binstandalone.sh -c standalone-mono.xml
+./binstandalone.sh -c standalone-mono.xml  -Dcassandra.boot_without_jna=true
 
 ```
 

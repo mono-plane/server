@@ -30,7 +30,7 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/distro-resources</directory>
-            <outputDirectory>/${nest.dist.zip.root.dir}</outputDirectory>
+            <outputDirectory>/${dist.zip.root.dir}</outputDirectory>
             <filtered>false</filtered>
             <fileMode>0644</fileMode>
             <directoryMode>0755</directoryMode>
@@ -48,7 +48,7 @@
         </dependencySet>
 
         <dependencySet>
-            <outputDirectory>/wildfly-${version.wildfly}</outputDirectory>
+            <outputDirectory>/${dist.zip.root.dir}</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <includes>
                 <include>monoplane.io:probe</include>
