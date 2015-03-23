@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2015 Red Hat, Inc. and/or its affiliates
+    and other contributors as indicated by the @author tags.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <groupId>monoplane.io</groupId>
+  <artifactId>server</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>Monoplane Server</name>
+  <description>An example runtime assembly</description>
+
+  <properties>
+    <version.wildfly>8.2.0.Final</version.wildfly>
+    <dist.zip.root.dir>wildfly-${version.wildfly}</dist.zip.root.dir>
+
+    <checkstyle.suppressions.file>${basedir}/src/main/scripts/checkstyle-suppressions.xml</checkstyle.suppressions.file>
+
+    <!-- The versions of the components that go into our integration distribution -->
+    <version.monoplane.storage>1.0-SNAPSHOT</version.monoplane.storage>
+    <version.monoplane.query>1.0-SNAPSHOT</version.monoplane.query>
+    <version.monoplane.probe>1.0-SNAPSHOT</version.monoplane.probe>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>monoplane.io</groupId>
+      <artifactId>storage</artifactId>
+      <version>${version.monoplane.storage}</version>
+      <classifier>module</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>monoplane.io</groupId>
+      <artifactId>query</artifactId>
+      <version>${version.monoplane.query}</version>
+      <classifier>module</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>monoplane.io</groupId>
+      <artifactId>probe</artifactId>
+      <version>${version.monoplane.probe}</version>
+      <classifier>module</classifier>
+      <type>zip</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-dist</artifactId>
+      <version>${version.wildfly}</version>
+      <type>zip</type>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>server</finalName>
+    <plugins>
+      <!-- unpack the nest distribution to get its configuration that we need to customize -->
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-server-configuration</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/server</outputDirectory>
+              <includeArtifactIds>monoplane-server-distro</includeArtifactIds>
+              <includes>*/standalone/configuration/standalone.xml</includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- if we have any files that we need in the distro, copy them now -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-distro-resources</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/distro-resources</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/distro-resources</directory>
+                  <filtering>false</filtering> <!-- let the assembly filter if it wants -->
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/scripts/distro-assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>distro-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unzip-distro</id>
+                <phase>install</phase>
+                <configuration>
+                  <target>
+                    <unzip src="${project.build.directory}/${project.build.finalName}-distribution.zip" dest="${project.build.directory}" />
+                    <chmod dir="${project.build.directory}/${dist.zip.root.dir}/bin" includes="*.sh"
+                           perm="u+x" type="file" />
+                    <echo>Extracted ${project.build.directory}/${project.build.finalName}-distribution.zip into ${project.build.directory}</echo>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
