@@ -84,10 +84,10 @@
 
     <profile>
 
-        <!--<subsystem xmlns="urn:org.wildfly.monoplane:query:1.0">
+        <subsystem xmlns="urn:org.wildfly.monoplane:query:1.0">
             <node name="WildflyMaster"/>
         </subsystem>
--->
+
         <subsystem xmlns="urn:org.wildfly.monoplane:storage:1.0">
             <cluster name="WildflyCluster"
                      seed-provider-class-name="org.apache.cassandra.locator.SimpleSeedProvider"
