@@ -27,16 +27,6 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>${project.build.finalName}</baseDirectory>
 
-    <fileSets>
-        <fileSet>
-            <directory>${project.build.directory}/distro-resources</directory>
-            <outputDirectory>/${dist.zip.root.dir}</outputDirectory>
-            <filtered>false</filtered>
-            <fileMode>0644</fileMode>
-            <directoryMode>0755</directoryMode>
-        </fileSet>
-    </fileSets>
-
     <dependencySets>
         <dependencySet>
             <outputDirectory>/</outputDirectory>
@@ -59,6 +49,16 @@
         </dependencySet>
 
     </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}/distro-resources</directory>
+            <outputDirectory>/${dist.zip.root.dir}</outputDirectory>
+            <filtered>false</filtered>
+            <fileMode>0644</fileMode>
+            <directoryMode>0755</directoryMode>
+        </fileSet>
+    </fileSets>
 
 </assembly>
 
